@@ -5,5 +5,30 @@
         <file>image/icon.png</file>
         <file>image/max.png</file>
         <file>image/min.png</file>
+        <file>image/back.svg</file>
+        <file>image/forward.svg</file>
+        <file>image/headphones.svg</file>
+        <file>image/music.svg</file>
+        <file>image/pause.svg</file>
+        <file>image/pause-circle.svg</file>
+        <file>image/play.svg</file>
+        <file>image/radio.svg</file>
+        <file>image/sounds.svg</file>
+        <file>image/flower.svg</file>
+        <file>image/list.svg</file>
+        <file>image/mute.svg</file>
+        <file>image/redo.svg</file>
+        <file>image/refresh.svg</file>
+        <file>image/rotate.svg</file>
+        <file>image/settings.svg</file>
+        <file>image/shuffle.svg</file>
+        <file>image/switch-off.svg</file>
+        <file>image/switch-on.svg</file>
+        <file>image/volume-loud.svg</file>
+        <file>image/volume-off.svg</file>
+        <file>image/volume-quiet.svg</file>
+        <file>image/rectangle.svg</file>
+        <file>image/stop.svg</file>
+        <file>image/video.svg</file>
     </qresource>
 </RCC>

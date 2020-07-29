@@ -19,15 +19,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwidget.cpp \
+    playerbar.cpp \
     titlebar.cpp
 
 HEADERS += \
     common.h \
     mainwidget.h \
+    playerbar.h \
     titlebar.h
 
 FORMS += \
     mainwidget.ui \
+    playerbar.ui \
     titlebar.ui
 
 # Default rules for deployment.
