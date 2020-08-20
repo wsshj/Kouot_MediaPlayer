@@ -30,5 +30,19 @@
         <file>image/rectangle.svg</file>
         <file>image/stop.svg</file>
         <file>image/video.svg</file>
+        <file>image/headphonesblack.svg</file>
+        <file>image/iconmonstr-headphones-16.svg</file>
+        <file>image/iconmonstr-party-9.svg</file>
+        <file>image/iconmonstr-party-10.svg</file>
+        <file>image/Music Note (1).ico</file>
+        <file>image/Music Cd.ico</file>
+        <file>image/Music Note.ico</file>
+        <file>image/music (2).ico</file>
+        <file>image/Music (1).ico</file>
+        <file>image/Music.ico</file>
+    </qresource>
+    <qresource prefix="/font">
+        <file>font/MoscowMetro.otf</file>
+        <file>font/MoscowMetroColor.otf</file>
     </qresource>
 </RCC>

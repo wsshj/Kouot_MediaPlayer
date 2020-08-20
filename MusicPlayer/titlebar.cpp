@@ -50,7 +50,7 @@ void TitleBar::initUI()
 
     // 创建画布填充背景色
     QPalette pal(palette());
-    pal.setColor(QPalette::Background, QColor(150,150,150));
+    pal.setColor(QPalette::Background, QColor(150,150,150,170));
     setAutoFillBackground(true);
     setPalette(pal);
 
@@ -127,8 +127,31 @@ bool TitleBar::eventFilter(QObject *obj, QEvent *event)
         QWidget *pWidget = qobject_cast<QWidget *>(obj); //获得发生事件的窗口对象
         if (pWidget)
         {
-            //窗体标题改变，则标题栏标题也随之改变
+            // 窗体标题改变，则标题栏标题也随之改变
             m_pTitleLabel->setText(pWidget->windowTitle());
+
+            // 添加外部字体
+            QStringList m_fontList;
+            m_fontList.clear();
+
+            QFont font;
+            font.setPointSize(18);
+
+            int lcdFontId = QFontDatabase::addApplicationFont(":/font/font/MoscowMetroColor.otf"); // 从source资源文件
+            if (lcdFontId != -1) // -1为加载失败
+            {
+                m_fontList << QFontDatabase::applicationFontFamilies(lcdFontId);
+            }
+
+            if (!m_fontList.isEmpty())
+            {
+                font.setFamily(m_fontList.at(0));
+            }
+
+            // 为Label添加样式，字体颜色
+            m_pTitleLabel->setStyleSheet("color: qconicalgradient(cx:0.5, cy:0.5, angle:0, stop:0 rgba(255, 0, 0, 255), stop:0.166 rgba(255, 255, 0, 255), stop:0.333 rgba(0, 255, 0, 255), stop:0.5 rgba(0, 255, 255, 255), stop:0.666 rgba(0, 0, 255, 255), stop:0.833 rgba(255, 0, 255, 255), stop:1 rgba(255, 0, 0, 255));");
+            // 为Label添加字体
+            m_pTitleLabel->setFont(font);
             return true;
         }
     }
@@ -140,7 +163,8 @@ bool TitleBar::eventFilter(QObject *obj, QEvent *event)
         {
             //窗体图标改变，则标题栏图标也随之改变
             QIcon icon = pWidget->windowIcon();
-            m_pIconLabel->setPixmap(icon.pixmap(m_pIconLabel->size()));
+            m_pIconLabel->setPixmap(icon.pixmap(25,25));
+            m_pIconLabel->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
             return true;
         }
     }

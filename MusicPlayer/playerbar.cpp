@@ -15,7 +15,6 @@ PlayerBar::PlayerBar(QWidget *parent) :
 void PlayerBar::initUI()
 {
     m_pTimeWidget = new QWidget(this);
-    m_pVolumeWidget = new QWidget(this);
 
     m_pTitleLable = new QLabel(this);
     m_pIconLable = new QLabel(this);
@@ -32,6 +31,7 @@ void PlayerBar::initUI()
     m_pPlayListButton = new QPushButton(this);
 
     m_pPlaySlider = new QSlider(Qt::Horizontal, this);
+    m_pVolumeSlider = new QSlider(Qt::Vertical, this);
 
     m_pProgressLable->setText("00:00");
     m_pDivisionLable->setText("/");
@@ -60,7 +60,7 @@ void PlayerBar::initUI()
     m_pStopButton->setToolTip("停止");
     m_pPreviousButton->setToolTip("前一首");
     m_pNextButton->setToolTip("后一首");
-    m_pModeButton->setToolTip("单曲播放");
+    m_pModeButton->setToolTip("播放模式：单曲播放");
     m_pVolumeButton->setToolTip("音量");
     m_pPlayListButton->setToolTip("播放列表");
 
@@ -91,11 +91,19 @@ void PlayerBar::initUI()
     m_pVolumeButton->setStyleSheet("border:none;");
     m_pPlayListButton->setStyleSheet("border:none;");
 
+    // 设置拖动条样式
     m_pPlaySlider->setStyleSheet("QSlider::groove:horizontal{height: 4px; border-radius: 2px;}"
                                  "QSlider::sub-page:horizontal{height: 4px; border-radius: 2px; background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.181818 rgba(32, 234, 230, 255), stop:0.471591 rgba(62, 168, 255, 255), stop:0.761364 rgba(35, 41, 214, 255));}"
                                  "QSlider::add-page:horizontal{height: 4px; border-radius: 2px; background-color: rgb(200, 200, 200);}"
                                  "QSlider::handle:horizontal{width: 8px; margin-top: -2px; margin-bottom: -2px; border-radius: 4px; background-color: rgb(35, 41, 214);}"
                                  "QSlider::handle:horizontal:hover {width: 10px; margin-top: -3px; margin-bottom: -3px; border-radius: 5px; background-color: rgb(66, 132, 198);}"
+                                 );
+
+    m_pVolumeSlider->setStyleSheet("QSlider::groove:vertical{width: 2px; border-radius: 1px;}"
+                                 "QSlider::sub-page:vertical{width: 2px; border-radius: 1px; background-color: rgba(200, 200, 200, 255);}"
+                                 "QSlider::add-page:vertical{width: 2px; border-radius: 1px; background-color: rgba(35, 41, 214, 255);}"
+                                 "QSlider::handle:vertical{height: 2px; border-radius: 1px; background-color: rgb(35, 41, 214);}"
+                                 "QSlider::handle:vertical:hover {height: 8px; margin-left: -3px; margin-right: -3px; border-radius: 4px; background-color: rgb(66, 132, 198);}"
                                  );
 
     // 创建画布填充背景色
@@ -114,10 +122,10 @@ void PlayerBar::initMedia()
 
     m_pPlayer->playlist()->setPlaybackMode(m_pPlayerList->CurrentItemOnce);
 
-//    m_pPlaySlider->setMinimum(0);
-//    m_pPlaySlider->setMaximum(100);
-//    m_pPlaySlider->setSingleStep(1);
-//    m_pPlaySlider->setValue(100);
+    m_pVolumeSlider->setMinimum(0);
+    m_pVolumeSlider->setMaximum(100);
+    m_pVolumeSlider->setSingleStep(1);
+    m_pVolumeSlider->setValue(100);
 }
 
 void PlayerBar::initConnect(QWidget *parent)
@@ -129,35 +137,39 @@ void PlayerBar::initConnect(QWidget *parent)
     connect(m_pModeButton, SIGNAL(clicked()), this, SLOT(on_modeButton_clicked()));
     connect(m_pVolumeButton, SIGNAL(clicked()), this, SLOT(on_volumeButton_clicked()));
     connect(m_pPlayListButton, SIGNAL(clicked()), this, SLOT(on_playlistButton_clicked()));
+
     connect(m_pPlaySlider, SIGNAL(valueChanged(int)), this, SLOT(on_playSlider_valueChanged(int)));
+    connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), this, SLOT(on_volumeSlider_valueChanged(int)));
 
     connect(m_pPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
     connect(m_pPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(getduration(qint64)));
     connect(m_pPlayer, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(playButtonChange(QMediaPlayer::State)));
     connect(m_pPlayer, SIGNAL(currentMediaChanged(const QMediaContent)), this, SLOT(nowPlaying(const QMediaContent)));
+    connect(m_pPlayer, SIGNAL(volumeChanged(int)), this, SLOT(volumeButtonChange(int)));
+
     connect(m_pPlayerList, SIGNAL(mediaInserted(int, int)), this, SLOT(showMediaList(int, int)));
     connect(m_pPlayerList, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)), this, SLOT(modeButtonChange(QMediaPlaylist::PlaybackMode)));
 
-    connect(parent,SIGNAL(send_filePath(QList<QMediaContent>)),this,SLOT(recv_filePath(QList<QMediaContent>)));
-    connect(parent,SIGNAL(send_itemDoubleClicked(int)),this,SLOT(recv_itemDoubleClicked(int)));
+    connect(parent, SIGNAL(send_filePath(QList<QMediaContent>)), this, SLOT(recv_filePath(QList<QMediaContent>)));
+    connect(parent, SIGNAL(send_itemDoubleClicked(int)), this, SLOT(recv_itemDoubleClicked(int)));
 }
-
 
 void PlayerBar::resizeEvent(QResizeEvent *event)
 {
-    m_pPreviousButton->setGeometry(50, 25, 50, 50);
-    m_pPlayButton->setGeometry(110, 25, 50, 50);
-    m_pNextButton->setGeometry(170, 25, 50, 50);
+    m_pPreviousButton->setGeometry(30, 15, 50, 50);
+    m_pPlayButton->setGeometry(90, 15, 50, 50);
+    m_pNextButton->setGeometry(150, 15, 50, 50);
 
-    m_pStopButton->setGeometry(230, 25, 50, 50);
-    m_pVolumeButton->setGeometry(290, 25, 50, 50);
+    m_pStopButton->setGeometry(210, 15, 50, 50);
 
-    m_pTitleLable->setGeometry(350,20,150,20);
-    m_pPlaySlider->setGeometry(350,40,width()-350-170,20);
-    m_pTimeWidget->setGeometry(width()-170-70,20,70,20);
+    m_pTitleLable->setGeometry(270,15,150,20);
+    m_pPlaySlider->setGeometry(270,32,width()-270-230,20);
+    m_pTimeWidget->setGeometry(width()-230-70,15,70,20);
 
-    m_pModeButton->setGeometry(width()-160, 25, 50, 50);
-    m_pPlayListButton->setGeometry(width()-100, 25, 50, 50);
+    m_pModeButton->setGeometry(width()-220, 15, 50, 50);
+    m_pVolumeSlider->setGeometry(width()-160, 15, 10, 50);
+    m_pVolumeButton->setGeometry(width()-140, 15, 50, 50);
+    m_pPlayListButton->setGeometry(width()-80, 15, 50, 50);
 
     event->ignore();
 }
@@ -221,7 +233,37 @@ void PlayerBar::on_modeButton_clicked()
 
 void PlayerBar::on_volumeButton_clicked()
 {
+    if(m_bMute)
+    {
+        m_pVolumeButton->setIcon(QIcon(":/image/image/volume-off.svg"));
+        m_pPlayer->setVolume(m_nVolume);
+        m_pVolumeSlider->setValue(m_nVolume);
+        m_bMute = false;
+    }
+    else
+    {
+        m_nVolume = m_pPlayer->volume();
+        m_pPlayer->setVolume(0);
+        m_pVolumeButton->setIcon(QIcon(":/image/image/mute.svg"));
+        m_pVolumeSlider->setValue(0);
+        m_bMute = true;
+    }
+}
 
+void PlayerBar::volumeButtonChange(int value)
+{
+    if(value == 0)
+    {
+        m_pVolumeButton->setIcon(QIcon(":/image/image/volume-off.svg"));
+    }
+    else if(value > 50)
+    {
+        m_pVolumeButton->setIcon(QIcon(":/image/image/volume-loud.svg"));
+    }
+    else
+    {
+        m_pVolumeButton->setIcon(QIcon(":/image/image/volume-quiet.svg"));
+    }
 }
 
 void PlayerBar::on_playlistButton_clicked()
@@ -266,7 +308,7 @@ void PlayerBar::positionChanged(qint64 playtime)
 }
 
 
-void PlayerBar::on_verticalSlider_valueChanged(int value)
+void PlayerBar::on_volumeSlider_valueChanged(int value)
 {
     m_pPlayer->setVolume(value);
 }
@@ -284,23 +326,23 @@ void PlayerBar::modeButtonChange(QMediaPlaylist::PlaybackMode mode)
     switch (mode) {
     case QMediaPlaylist::CurrentItemOnce: //单曲，播完停止
         m_pModeButton->setIcon(QIcon(":/image/image/redo.svg"));
-        m_pModeButton->setToolTip("单曲播放");
+        m_pModeButton->setToolTip("播放模式：单曲播放");
         break;
     case QMediaPlaylist::CurrentItemInLoop: //单曲，循环
         m_pModeButton->setIcon(QIcon(":/image/image/refresh.svg"));
-        m_pModeButton->setToolTip("单曲循环");
+        m_pModeButton->setToolTip("播放模式：单曲循环");
         break;
     case QMediaPlaylist::Sequential: //列表，播完停止
         m_pModeButton->setIcon(QIcon(":/image/image/redo.svg"));
-        m_pModeButton->setToolTip("顺序播放");
+        m_pModeButton->setToolTip("播放模式：顺序播放");
         break;
     case QMediaPlaylist::Loop: //列表，循环
         m_pModeButton->setIcon(QIcon(":/image/image/rotate.svg"));
-        m_pModeButton->setToolTip("循环播放");
+        m_pModeButton->setToolTip("播放模式：循环播放");
         break;
     case QMediaPlaylist::Random: //随机
         m_pModeButton->setIcon(QIcon(":/image/image/shuffle.svg"));
-        m_pModeButton->setToolTip("随机播放");
+        m_pModeButton->setToolTip("播放模式：随机播放");
         break;
     }
 }

@@ -27,8 +27,8 @@ void MainWidget::initUI()
     // 设置主窗体
     this->resize(960, 640);
     this->setMinimumSize(600, 400);
-    this->setWindowIcon(QIcon(":/image/image/icon.png"));
-    this->setWindowTitle("rouot");
+    this->setWindowIcon(QIcon(":/image/image/Music Note.ico"));
+    this->setWindowTitle("kouot");
 
     // 动图播放器
     m_pMovie = new QMovie(":/image/image/background.gif");
@@ -52,8 +52,8 @@ void MainWidget::resizeEvent(QResizeEvent *event)
 {
     m_pTitleBar->setGeometry(0, 0, width(), 30);
     m_pMovieLable->setGeometry(0, 30, width(), height()-30);
-    m_pPlayerBar->setGeometry(0, height()-100, width(), 100);
-    m_pPlayListBar->setGeometry(width()-200, 30, 200, height()-130);
+    m_pPlayerBar->setGeometry(0, height()-80, width(), 80);
+    m_pPlayListBar->setGeometry(width()-200, 30, 200, height()-110);
 
     event->ignore();
 }

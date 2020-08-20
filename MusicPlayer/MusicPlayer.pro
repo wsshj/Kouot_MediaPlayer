@@ -42,3 +42,5 @@ msvc:QMAKE_CXXFLAGS += -execution-charset:utf-8
 
 RESOURCES += \
     res.qrc
+
+RC_FILE = icon.rc

@@ -22,7 +22,6 @@ private:
 
 private:
     QWidget *m_pTimeWidget;
-    QWidget *m_pVolumeWidget;
 
     QLabel *m_pTitleLable;
     QLabel *m_pIconLable;
@@ -40,6 +39,10 @@ private:
     QPushButton *m_pPlayListButton;
 
     QSlider *m_pPlaySlider;
+    QSlider *m_pVolumeSlider;
+
+    bool m_bMute = false;
+    int m_nVolume = 0;
 
     // 界面初始化
     void initUI();
@@ -79,13 +82,13 @@ private slots:
 
     void on_playlistButton_clicked();
 
-    void on_verticalSlider_valueChanged(int value);
-
     void getduration(qint64 playtime);
 
     void positionChanged(qint64 playtime);
 
     void on_playSlider_valueChanged(int value);
+
+    void on_volumeSlider_valueChanged(int value);
 
     void playButtonChange(QMediaPlayer::State state);
 
@@ -98,6 +101,8 @@ private slots:
     void recv_filePath(QList<QMediaContent> filePathList);
 
     void recv_itemDoubleClicked(int index);
+
+    void volumeButtonChange(int value);
 };
 
 #endif // PLAYERBAR_H
