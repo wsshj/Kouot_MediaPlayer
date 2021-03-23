@@ -33,9 +33,9 @@ void PlayerBar::initUI()
     m_pPlaySlider = new QSlider(Qt::Horizontal, this);
     m_pVolumeSlider = new QSlider(Qt::Vertical, this);
 
-    m_pProgressLable->setText("00:00");
+    m_pProgressLable->setText("00:00:00");
     m_pDivisionLable->setText("/");
-    m_pDurationLable->setText("00:00");
+    m_pDurationLable->setText("00:00:00");
 
     QHBoxLayout *pLayout = new QHBoxLayout;
     m_pTimeWidget->setLayout(pLayout);
@@ -164,7 +164,7 @@ void PlayerBar::resizeEvent(QResizeEvent *event)
 
     m_pTitleLable->setGeometry(270,15,150,20);
     m_pPlaySlider->setGeometry(270,32,width()-270-230,20);
-    m_pTimeWidget->setGeometry(width()-230-70,15,70,20);
+    m_pTimeWidget->setGeometry(width()-230-100,15,100,20);
 
     m_pModeButton->setGeometry(width()-220, 15, 50, 50);
     m_pVolumeSlider->setGeometry(width()-160, 15, 10, 50);
@@ -281,15 +281,17 @@ QString PlayerBar::settime(qint64 playtime)
     minute = (time - hour * 3600) / 60;
     second = time - hour * 3600 - minute * 60;
 
-    if(minute < 10)
-    {
-        if(second < 10)
-        {
-            return QString("0%1:0%2").arg(minute).arg(second);
-        }
-        return QString("0%1:%2").arg(minute).arg(second);
-    }
-    return QString("%1:%2").arg(minute).arg(second);  //把int型转化为string类型后再设置为label的text
+//    if(minute < 10)
+//    {
+//        if(second < 10)
+//        {
+//            return QString("0%1:0%2").arg(minute).arg(second);
+//        }
+//        return QString("0%1:%2").arg(minute).arg(second);
+//    }
+//    return QString("%1:%2").arg(minute).arg(second);  //把int型转化为string类型后再设置为label的text
+
+    return QString("%1%2:%3%4:%5%6").arg(hour/10).arg(hour%10).arg(minute/10).arg(minute%10).arg(second/10).arg(second%10);
 }
 
 void PlayerBar::getduration(qint64 playtime)
@@ -390,6 +392,21 @@ void PlayerBar::recv_itemDoubleClicked(int index)
 {
     m_pPlayerList->setCurrentIndex(index);
     m_pPlayer->play();
+}
+
+void PlayerBar::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key()){
+    case Qt::Key_Space:
+        on_playButton_clicked();
+        return;
+    case Qt::Key_Left:
+        m_pPlayer->setPosition(m_pPlayer->position() - 5000);
+        return;
+    case Qt::Key_Right:
+        m_pPlayer->setPosition(m_pPlayer->position() + 5000);
+        return;
+    }
 }
 
 PlayerBar::~PlayerBar()

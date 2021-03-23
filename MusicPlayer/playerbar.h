@@ -55,6 +55,8 @@ protected:
     // 监听窗体缩放事件
     void resizeEvent(QResizeEvent *event);
 
+    void keyPressEvent(QKeyEvent *event);
+
 public:
     QMediaPlayer *m_pPlayer;
     QMediaPlaylist *m_pPlayerList;

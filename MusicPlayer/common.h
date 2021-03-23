@@ -24,6 +24,10 @@
 #include <QStringList>
 #include <QFont>
 #include <QFontDatabase>
+#include <QVideoWidget>
+#include <QGraphicsVideoItem>
+#include <QGraphicsView>
+#include <QKeyEvent>
 
 #ifdef Q_OS_WIN
 #include <qt_windows.h>

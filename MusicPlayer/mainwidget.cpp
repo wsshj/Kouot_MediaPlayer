@@ -6,7 +6,7 @@ MainWidget::MainWidget(QWidget *parent)
     , ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
-
+    this->grabKeyboard();
     initUI();
 }
 
@@ -20,6 +20,20 @@ void MainWidget::initUI()
     m_pTitleBar = new TitleBar(this);
     m_pPlayerBar = new PlayerBar(this);
     m_pPlayListBar = new QListWidget(this);
+
+
+    QApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+    //
+    m_pVideoWidget = new QVideoWidget(this);
+    m_pPlayerBar->m_pPlayer->setVideoOutput(m_pVideoWidget);
+
+    //m_pVideoWidget->setWindowFlags(Qt::FramelessWindowHint);
+//    m_pVideoItem = new QGraphicsVideoItem;
+//    m_pVideoScene = new QGraphicsScene();
+//    m_pVideoView = new QGraphicsView(m_pVideoScene, this);
+
+//    m_pPlayerBar->m_pPlayer->setVideoOutput(m_pVideoItem);
+//    m_pVideoScene->addItem(m_pVideoItem);
 
     // 安装事件过滤器，标题栏中 eventFilter 将监听主界面事件
     this->installEventFilter(m_pTitleBar);
@@ -54,8 +68,28 @@ void MainWidget::resizeEvent(QResizeEvent *event)
     m_pMovieLable->setGeometry(0, 30, width(), height()-30);
     m_pPlayerBar->setGeometry(0, height()-80, width(), 80);
     m_pPlayListBar->setGeometry(width()-200, 30, 200, height()-110);
+    m_pVideoWidget->setGeometry(0, 30, width()-200, height()-110);
 
     event->ignore();
+}
+
+void MainWidget::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key()){
+    case Qt::Key_F11:
+        if(m_pVideoWidget->isFullScreen())
+        {
+            m_pVideoWidget->setWindowFlags (Qt::SubWindow);
+            m_pVideoWidget->showNormal();
+            m_pVideoWidget->setGeometry(0, 30, width()-200, height()-110);
+        }
+        else
+        {
+            m_pVideoWidget->setWindowFlags (Qt::Window);
+            m_pVideoWidget->showFullScreen();
+        }
+        return;
+    }
 }
 
 bool MainWidget::nativeEvent(const QByteArray &eventType, void *message, long *result)
@@ -188,7 +222,7 @@ void MainWidget::dropEvent(QDropEvent *event)
 
         QString file_extend = fileInfo.suffix();
 
-        if(file_extend == "flac" || file_extend == "wav" || file_extend == "mp3" || file_extend == "ape")
+        if(file_extend == "flac" || file_extend == "wav" || file_extend == "mp3" || file_extend == "ape" || file_extend == "rmvb")
         {
             filePathList << QUrl::fromLocalFile(file_path);
         }

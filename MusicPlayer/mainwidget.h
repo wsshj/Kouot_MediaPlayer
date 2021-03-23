@@ -6,6 +6,7 @@
 #include "common.h"
 #include "titlebar.h"
 #include "playerbar.h"
+#include "videowidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWidget; }
@@ -41,12 +42,25 @@ private:
     // 放动图播放器的标签
     QLabel *m_pMovieLable;
 
+    // 播放视频窗体
+    QVideoWidget *m_pVideoWidget;
+
+    //QVideoWidget *m_pVideoWidget;
+
+    QGraphicsVideoItem *m_pVideoItem;
+
+    QGraphicsView *m_pVideoView;
+
+    QGraphicsScene *m_pVideoScene;
+
     // 界面初始化
     void initUI();
 
 protected:
     // 监听窗体缩放事件
     void resizeEvent(QResizeEvent *event);
+
+    void keyPressEvent(QKeyEvent *event);
 
     // 用来获取windows的事件处理
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);
