@@ -6,7 +6,6 @@
 #include "common.h"
 #include "titlebar.h"
 #include "playerbar.h"
-#include "videowidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWidget; }
@@ -45,14 +44,6 @@ private:
     // 播放视频窗体
     QVideoWidget *m_pVideoWidget;
 
-    //QVideoWidget *m_pVideoWidget;
-
-    QGraphicsVideoItem *m_pVideoItem;
-
-    QGraphicsView *m_pVideoView;
-
-    QGraphicsScene *m_pVideoScene;
-
     // 界面初始化
     void initUI();
 
@@ -86,5 +77,7 @@ private slots:
     void dragEnterEvent(QDragEnterEvent *event);
 
     void dropEvent(QDropEvent *event);
+
+    void VideoWidgetStatus(bool videoAvailable);
 };
 #endif // MAINWIDGET_H

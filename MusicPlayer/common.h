@@ -28,6 +28,7 @@
 #include <QGraphicsVideoItem>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QVector>
 
 #ifdef Q_OS_WIN
 #include <qt_windows.h>

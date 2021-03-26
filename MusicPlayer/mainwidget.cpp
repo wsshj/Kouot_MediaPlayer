@@ -21,19 +21,9 @@ void MainWidget::initUI()
     m_pPlayerBar = new PlayerBar(this);
     m_pPlayListBar = new QListWidget(this);
 
-
-    QApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
-    //
     m_pVideoWidget = new QVideoWidget(this);
     m_pPlayerBar->m_pPlayer->setVideoOutput(m_pVideoWidget);
-
-    //m_pVideoWidget->setWindowFlags(Qt::FramelessWindowHint);
-//    m_pVideoItem = new QGraphicsVideoItem;
-//    m_pVideoScene = new QGraphicsScene();
-//    m_pVideoView = new QGraphicsView(m_pVideoScene, this);
-
-//    m_pPlayerBar->m_pPlayer->setVideoOutput(m_pVideoItem);
-//    m_pVideoScene->addItem(m_pVideoItem);
+    m_pVideoWidget->setVisible(false);
 
     // 安装事件过滤器，标题栏中 eventFilter 将监听主界面事件
     this->installEventFilter(m_pTitleBar);
@@ -60,6 +50,7 @@ void MainWidget::initUI()
     connect(m_pPlayerBar,SIGNAL(send_fileNameList(QList<QString>)),this,SLOT(recv_fileNameList(QList<QString>)));
     connect(m_pPlayerBar,SIGNAL(send_operate_playListBar()),this,SLOT(recv_operate_playListBar()));
     connect(m_pPlayListBar,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
+    connect(m_pPlayerBar->m_pPlayer,SIGNAL(videoAvailableChanged(bool)),this,SLOT(VideoWidgetStatus(bool)));
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event)
@@ -76,6 +67,22 @@ void MainWidget::resizeEvent(QResizeEvent *event)
 void MainWidget::keyPressEvent(QKeyEvent *event)
 {
     switch(event->key()){
+    case Qt::Key_Space:
+        if(m_pPlayerBar->m_pPlayer->PlayingState == QMediaPlayer::PlayingState)
+        {
+            m_pPlayerBar->m_pPlayer->pause();
+        }
+        else if(m_pPlayerBar->m_pPlayer->PlayingState == QMediaPlayer::PausedState)
+        {
+            m_pPlayerBar->m_pPlayer->play();
+        }
+        return;
+    case Qt::Key_Left:
+        m_pPlayerBar->m_pPlayer->setPosition(m_pPlayerBar->m_pPlayer->position() - 5000);
+        return;
+    case Qt::Key_Right:
+        m_pPlayerBar->m_pPlayer->setPosition(m_pPlayerBar->m_pPlayer->position() + 5000);
+        return;
     case Qt::Key_F11:
         if(m_pVideoWidget->isFullScreen())
         {
@@ -102,9 +109,13 @@ bool MainWidget::nativeEvent(const QByteArray &eventType, void *message, long *r
     {
     case WM_NCHITTEST:
     {
+//        // 计算鼠标在屏幕中的位置坐标,受分辨率影响
+//        int xPos = GET_X_LPARAM(param->lParam) - this->frameGeometry().x();
+//        int yPos = GET_Y_LPARAM(param->lParam) - this->frameGeometry().y();
+
         // 计算鼠标在窗体中的位置坐标
-        int xPos = GET_X_LPARAM(param->lParam) - this->frameGeometry().x();
-        int yPos = GET_Y_LPARAM(param->lParam) - this->frameGeometry().y();
+        int xPos = mapFromGlobal(QCursor().pos()).x();
+        int yPos = mapFromGlobal(QCursor().pos()).y();
 
         // 鼠标区域位于窗体边框，进行缩放。可以模拟窗体边框缩放效果
         if(xPos < m_nBorderWidth && yPos<m_nBorderWidth)                    //左上角
@@ -229,6 +240,11 @@ void MainWidget::dropEvent(QDropEvent *event)
     }
 
     emit send_filePath(filePathList);
+}
+
+void MainWidget::VideoWidgetStatus(bool videoAvailable)
+{
+    m_pVideoWidget->setVisible(videoAvailable);
 }
 
 MainWidget::~MainWidget()

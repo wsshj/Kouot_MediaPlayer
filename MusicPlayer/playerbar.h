@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include "common.h"
+#include "playbutton.h"
 
 namespace Ui {
 class PlayerBar;
@@ -34,8 +35,18 @@ private:
     QPushButton *m_pStopButton;
     QPushButton *m_pPreviousButton;
     QPushButton *m_pNextButton;
-    QPushButton *m_pModeButton;
-    QPushButton *m_pVolumeButton;
+
+    QPushButton *m_pCurrentItemOnceButton;
+    QPushButton *m_pCurrentItemInLoopButton;
+    QPushButton *m_pSequentialButton;
+    QPushButton *m_pLoopButton;
+    QPushButton *m_pRandomButton;
+    QList<QPushButton *> m_ButtonList;
+
+    QList<QIcon> m_VolumeIconList;
+    QPushButton *m_pVolumeOnButton;
+    QPushButton *m_pVolumeOffButton;
+
     QPushButton *m_pPlayListButton;
 
     QSlider *m_pPlaySlider;
@@ -46,16 +57,16 @@ private:
 
     // 界面初始化
     void initUI();
+    // 播放初始化
+    void initMedia();
     // 信号槽初始化
     void initConnect(QWidget *parent);
-    // 界面初始化
-    void initMedia();
+    // 配置初始化
+    void initConfig();
 
 protected:
     // 监听窗体缩放事件
     void resizeEvent(QResizeEvent *event);
-
-    void keyPressEvent(QKeyEvent *event);
 
 public:
     QMediaPlayer *m_pPlayer;
@@ -70,27 +81,34 @@ signals:
     void send_fileNameList(QList<QString> strNameList);
 
 private slots:
-    void on_playButton_clicked();
+    void playButton_clicked();
 
-    void on_stopButton_clicked();
+    void pauseButton_clicked();
 
-    void on_previousButton_clicked();
+    void stopButton_clicked();
 
-    void on_nextButton_clicked();
+    void previousButton_clicked();
 
-    void on_modeButton_clicked();
+    void nextButton_clicked();
 
-    void on_volumeButton_clicked();
+    void volumeOnButton_clicked();
+    void volumeOffButton_clicked();
 
-    void on_playlistButton_clicked();
+    void playlistButton_clicked();
+
+    void currentItemOnceButton_clicked();
+    void currentItemInLoopButton_clicked();
+    void sequentialButton_clicked();
+    void loopButton_clicked();
+    void randomButton_clicked();
 
     void getduration(qint64 playtime);
 
     void positionChanged(qint64 playtime);
 
-    void on_playSlider_valueChanged(int value);
+    void playSlider_valueChanged(int value);
 
-    void on_volumeSlider_valueChanged(int value);
+    void volumeSlider_valueChanged(int value);
 
     void playButtonChange(QMediaPlayer::State state);
 

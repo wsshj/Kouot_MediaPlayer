@@ -19,12 +19,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwidget.cpp \
+    playbutton.cpp \
     playerbar.cpp \
     titlebar.cpp
 
 HEADERS += \
     common.h \
     mainwidget.h \
+    playbutton.h \
     playerbar.h \
     titlebar.h
 
