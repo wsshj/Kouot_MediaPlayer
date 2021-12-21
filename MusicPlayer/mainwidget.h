@@ -44,14 +44,24 @@ private:
     // 播放视频窗体
     QVideoWidget *m_pVideoWidget;
 
+    // 定时器
+    QTimer *m_pTimer;
+
     // 界面初始化
     void initUI();
+
+    // 全屏显示的一系列逻辑
+    void fullScreen();
 
 protected:
     // 监听窗体缩放事件
     void resizeEvent(QResizeEvent *event);
 
+    // 键盘点击事件
     void keyPressEvent(QKeyEvent *event);
+
+    // 鼠标移动事件
+    void mouseMoveEvent(QMouseEvent *event);
 
     // 用来获取windows的事件处理
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);
@@ -79,5 +89,7 @@ private slots:
     void dropEvent(QDropEvent *event);
 
     void VideoWidgetStatus(bool videoAvailable);
+
+    void onTimeout();
 };
 #endif // MAINWIDGET_H

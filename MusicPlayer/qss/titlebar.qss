@@ -1,0 +1,43 @@
+QFrame#backgroundFrame
+{
+    /* background-color: rgba(150,150,150,200); */
+    background-color: rgba(255,255,255,170);
+}
+
+QPushButton
+{
+    border:none;
+    margin: 3px 3px 3px 3px;
+}
+
+QPushButton#minimizeButton
+{
+    border-image: url(:/image/image/min.png);
+}
+
+QPushButton#maximizeButton
+{
+    border-image: url(:/image/image/max.png);
+}
+
+QPushButton#closeButton
+{
+    border-image: url(:/image/image/close.png);
+}
+
+QLabel#titleLabel
+{
+    font: 18pt "Moscow Metro Color";
+    color: qconicalgradient(
+        cx:0.5, 
+        cy:0.5, 
+        angle:0, 
+        stop:0 rgba(255, 0, 0, 255), 
+        stop:0.166 rgba(255, 255, 0, 255), 
+        stop:0.333 rgba(0, 255, 0, 255), 
+        stop:0.5 rgba(0, 255, 255, 255), 
+        stop:0.666 rgba(0, 0, 255, 255), 
+        stop:0.833 rgba(255, 0, 255, 255), 
+        stop:1 rgba(255, 0, 0, 255)
+    );
+}

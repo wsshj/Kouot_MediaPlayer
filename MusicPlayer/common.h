@@ -29,6 +29,7 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QVector>
+#include <QTimer>
 
 #ifdef Q_OS_WIN
 #include <qt_windows.h>
@@ -36,5 +37,7 @@
 #pragma comment(lib, "user32.lib")
 #else
 #endif
+
+void loadQss(QString url, QWidget *widget);
 
 #endif // COMMON_H

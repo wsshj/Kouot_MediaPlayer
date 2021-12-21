@@ -1,0 +1,163 @@
+QFrame#backgroundFrame
+{
+    background-color: rgba(255,255,255,170);
+}
+
+QPushButton
+{
+    border:none;
+}
+
+QPushButton#playButton
+{
+    border-image: url(:/image/image/play.svg);
+}
+
+QPushButton#pauseButton
+{
+    border-image: url(:/image/image/pause.svg);
+}
+
+QPushButton#stopButton
+{
+    border-image: url(:/image/image/stop.svg);
+}
+
+QPushButton#previousButton
+{
+    border-image: url(:/image/image/back.svg);
+}
+
+QPushButton#nextButton
+{
+    border-image: url(:/image/image/forward.svg);
+}
+
+QPushButton#currentItemOnceButton
+{
+    border-image: url(:/image/image/redo.svg);
+}
+
+QPushButton#currentItemInLoopButton
+{
+    border-image: url(:/image/image/refresh.svg);
+}
+
+QPushButton#sequentialButton
+{
+    border-image: url(:/image/image/redo.svg);
+}
+
+QPushButton#loopButton
+{
+    border-image: url(:/image/image/rotate.svg);
+}
+
+QPushButton#randomButton
+{
+    border-image: url(:/image/image/shuffle.svg);
+}
+
+QPushButton#volumeLoudButton
+{
+    border-image: url(:/image/image/volume-loud.svg);
+}
+
+QPushButton#volumeQuietButton
+{
+    border-image: url(:/image/image/volume-quiet.svg);
+}
+
+QPushButton#volumeOffButton
+{
+    border-image: url(:/image/image/mute.svg);
+}
+
+QPushButton#playlistButton
+{
+    border-image: url(:/image/image/list.svg);
+}
+
+QSlider::groove:horizontal
+{
+    height: 4px; 
+    border-radius: 2px;
+}
+
+QSlider::sub-page:horizontal
+{
+    height: 4px; 
+    border-radius: 2px; 
+    background-color: qlineargradient(
+        spread:pad,
+        x1:0, 
+        y1:0, 
+        x2:1, 
+        y2:0, 
+        stop:0.181818 rgba(32, 234, 230, 255), 
+        stop:0.471591 rgba(62, 168, 255, 255), 
+        stop:0.761364 rgba(35, 41, 214, 255)
+    );
+}
+
+QSlider::add-page:horizontal
+{
+    height: 4px; 
+    border-radius: 2px; 
+    background-color: rgb(200, 200, 200);
+}
+
+QSlider::handle:horizontal
+{
+    width: 8px; 
+    margin-top: -2px; 
+    margin-bottom: -2px; 
+    border-radius: 4px; 
+    background-color: rgb(35, 41, 214);
+}
+
+QSlider::handle:horizontal:hover 
+{
+    width: 10px; 
+    margin-top: -3px; 
+    margin-bottom: -3px; 
+    border-radius: 5px; 
+    background-color: rgb(66, 132, 198);
+}
+
+QSlider::groove:vertical
+{
+    width: 2px; 
+    border-radius: 1px;
+}
+
+QSlider::sub-page:vertical
+{
+    width: 2px; 
+    border-radius: 1px; 
+    background-color: rgba(200, 200, 200, 255);
+}
+
+QSlider::add-page:vertical
+{
+    width: 2px; 
+    border-radius: 1px; 
+    background-color: rgba(35, 41, 214, 255);
+}
+
+QSlider::handle:vertical
+{
+    height: 2px; 
+    border-radius: 1px; 
+    background-color: rgb(35, 41, 214);
+}
+                                
+QSlider::handle:vertical:hover 
+{
+    height: 8px;
+    margin-left: -3px; 
+    margin-right: -3px; 
+    border-radius: 4px; 
+    background-color: rgb(66, 132, 198);
+}
+                                 

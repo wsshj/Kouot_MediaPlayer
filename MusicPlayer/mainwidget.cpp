@@ -6,7 +6,10 @@ MainWidget::MainWidget(QWidget *parent)
     , ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
+
+    // 如果一个 Widget 已经 grabKeyboard，所有键盘事件将发送到该Widget而不是获得焦点的Widget
     this->grabKeyboard();
+
     initUI();
 }
 
@@ -23,7 +26,8 @@ void MainWidget::initUI()
 
     m_pVideoWidget = new QVideoWidget(this);
     m_pPlayerBar->m_pPlayer->setVideoOutput(m_pVideoWidget);
-    m_pVideoWidget->setVisible(false);
+//    m_pVideoWidget->setVisible(false);
+
 
     // 安装事件过滤器，标题栏中 eventFilter 将监听主界面事件
     this->installEventFilter(m_pTitleBar);
@@ -47,16 +51,56 @@ void MainWidget::initUI()
     m_pPlayListBar->setStyleSheet("border:none;background-color: rgba(255, 255, 255, 0.5);");
     m_pPlayListBar->setVisible(false);
 
+    m_pTimer = new QTimer(this);
+
+//    QGridLayout* layout = new QGridLayout(this);
+//    layout->setContentsMargins(0,0,0,0);
+//    layout->addWidget(m_pVideoWidget);
+//    this->setLayout(layout);
+//    m_pVideoWidget->lower();
+
+    m_pVideoWidget->lower();
+    m_pTitleBar->raise();
+    m_pPlayerBar->raise();
+    m_pPlayListBar->raise();
+
     connect(m_pPlayerBar,SIGNAL(send_fileNameList(QList<QString>)),this,SLOT(recv_fileNameList(QList<QString>)));
     connect(m_pPlayerBar,SIGNAL(send_operate_playListBar()),this,SLOT(recv_operate_playListBar()));
     connect(m_pPlayListBar,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
     connect(m_pPlayerBar->m_pPlayer,SIGNAL(videoAvailableChanged(bool)),this,SLOT(VideoWidgetStatus(bool)));
+    connect(m_pTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+}
+
+void MainWidget::fullScreen()
+{
+    if(isFullScreen())
+    {
+        showNormal();
+        m_pMovieLable->setMouseTracking(false);
+        m_pVideoWidget->setMouseTracking(false);
+        setMouseTracking(false);
+
+        setCursor(Qt::ArrowCursor);
+
+        m_pTitleBar->setVisible(true);
+        m_pPlayerBar->setVisible(true);
+    }
+    else
+    {
+        showFullScreen();
+        m_pMovieLable->setMouseTracking(true);
+        m_pVideoWidget->setMouseTracking(true);
+        setMouseTracking(true);
+//        m_pVideoWidget->setGeometry(0, 0, width(), height());
+
+        m_pVideoWidget->setAutoFillBackground(true);
+    }
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event)
 {
     m_pTitleBar->setGeometry(0, 0, width(), 30);
-    m_pMovieLable->setGeometry(0, 30, width(), height()-30);
+    m_pMovieLable->setGeometry(0, 0, width(), height());
     m_pPlayerBar->setGeometry(0, height()-80, width(), 80);
     m_pPlayListBar->setGeometry(width()-200, 30, 200, height()-110);
     m_pVideoWidget->setGeometry(0, 30, width()-200, height()-110);
@@ -68,11 +112,11 @@ void MainWidget::keyPressEvent(QKeyEvent *event)
 {
     switch(event->key()){
     case Qt::Key_Space:
-        if(m_pPlayerBar->m_pPlayer->PlayingState == QMediaPlayer::PlayingState)
+        if(m_pPlayerBar->m_pPlayer->state() == QMediaPlayer::PlayingState)
         {
             m_pPlayerBar->m_pPlayer->pause();
         }
-        else if(m_pPlayerBar->m_pPlayer->PlayingState == QMediaPlayer::PausedState)
+        else if(m_pPlayerBar->m_pPlayer->state() == QMediaPlayer::PausedState)
         {
             m_pPlayerBar->m_pPlayer->play();
         }
@@ -83,25 +127,57 @@ void MainWidget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Right:
         m_pPlayerBar->m_pPlayer->setPosition(m_pPlayerBar->m_pPlayer->position() + 5000);
         return;
-    case Qt::Key_F11:
-        if(m_pVideoWidget->isFullScreen())
-        {
-            m_pVideoWidget->setWindowFlags (Qt::SubWindow);
-            m_pVideoWidget->showNormal();
-            m_pVideoWidget->setGeometry(0, 30, width()-200, height()-110);
-        }
-        else
-        {
-            m_pVideoWidget->setWindowFlags (Qt::Window);
-            m_pVideoWidget->showFullScreen();
-        }
+    case Qt::Key_Up:
+        m_pPlayerBar->m_pPlayer->setVolume(m_pPlayerBar->m_pPlayer->volume() + 2);
         return;
+    case Qt::Key_Down:
+        m_pPlayerBar->m_pPlayer->setVolume(m_pPlayerBar->m_pPlayer->volume() - 2);
+        return;
+    case Qt::Key_1:
+        m_pPlayerBar->m_pPlayer->playlist()->setPlaybackMode(QMediaPlaylist::CurrentItemOnce);
+        return;
+    case Qt::Key_2:
+        m_pPlayerBar->m_pPlayer->playlist()->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
+        return;
+    case Qt::Key_3:
+        m_pPlayerBar->m_pPlayer->playlist()->setPlaybackMode(QMediaPlaylist::Sequential);
+        return;
+    case Qt::Key_4:
+        m_pPlayerBar->m_pPlayer->playlist()->setPlaybackMode(QMediaPlaylist::Loop);
+        return;
+    case Qt::Key_5:
+        m_pPlayerBar->m_pPlayer->playlist()->setPlaybackMode(QMediaPlaylist::Random);
+        return;
+    case Qt::Key_F11:
+        fullScreen();
+        return;
+    }
+}
+
+void MainWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    if(isFullScreen())
+    {
+        qDebug() << event->pos();
+
+        m_pTimer->start(2000);
+        setCursor(Qt::ArrowCursor);
+        m_pTitleBar->setVisible(true);
+        m_pPlayerBar->setVisible(true);
+
+        m_pVideoWidget->setGeometry(0, 30, width()-200, height()-110);
+
     }
 }
 
 bool MainWidget::nativeEvent(const QByteArray &eventType, void *message, long *result)
 {
     Q_UNUSED(eventType)
+
+    if(isFullScreen())
+    {
+        return false;
+    }
 
     MSG *param = static_cast<MSG *>(message);
 
@@ -172,7 +248,7 @@ QList<QMediaContent> MainWidget::traverseFolder(QString path, QList<QMediaConten
 
     //获取所选文件类型过滤器
     QStringList filters;
-    filters<<QString("*.flac")<<QString("*.wav")<<QString("*.mp3")<<QString("*.ape");
+    filters<<QString("*.flac")<<QString("*.wav")<<QString("*.mp3")<<QString("*.ape")<<QString("*.rmvb")<<QString("*.mp4");
 
     //定义迭代器并设置过滤器
     QDirIterator dir_iterator(path,
@@ -233,7 +309,7 @@ void MainWidget::dropEvent(QDropEvent *event)
 
         QString file_extend = fileInfo.suffix();
 
-        if(file_extend == "flac" || file_extend == "wav" || file_extend == "mp3" || file_extend == "ape" || file_extend == "rmvb")
+        if(file_extend == "flac" || file_extend == "wav" || file_extend == "mp3" || file_extend == "ape" || file_extend == "rmvb" || file_extend == "mp4")
         {
             filePathList << QUrl::fromLocalFile(file_path);
         }
@@ -245,6 +321,27 @@ void MainWidget::dropEvent(QDropEvent *event)
 void MainWidget::VideoWidgetStatus(bool videoAvailable)
 {
     m_pVideoWidget->setVisible(videoAvailable);
+}
+
+void MainWidget::onTimeout()
+{
+    if (mapFromGlobal(QCursor().pos()).y() < 30 || mapFromGlobal(QCursor().pos()).y() > height() - 80)
+    {
+        qDebug() << "dada";
+        m_pTimer->stop();
+        return;
+    }
+
+    if(isFullScreen())
+    {
+        setCursor(Qt::BlankCursor); //隐藏鼠标
+
+        m_pTitleBar->setVisible(false);
+        m_pPlayerBar->setVisible(false);
+
+        m_pVideoWidget->setGeometry(0, 0, width(), height());
+    }
+
 }
 
 MainWidget::~MainWidget()

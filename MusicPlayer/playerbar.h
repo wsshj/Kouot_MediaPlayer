@@ -22,6 +22,8 @@ private:
     Ui::PlayerBar *ui;
 
 private:
+    QFrame *m_pBackgroundFrame;
+
     QWidget *m_pTimeWidget;
 
     QLabel *m_pTitleLable;
@@ -43,8 +45,8 @@ private:
     QPushButton *m_pRandomButton;
     QList<QPushButton *> m_ButtonList;
 
-    QList<QIcon> m_VolumeIconList;
-    QPushButton *m_pVolumeOnButton;
+    QPushButton *m_pVolumeLoudButton;
+    QPushButton *m_pVolumeQuietButton;
     QPushButton *m_pVolumeOffButton;
 
     QPushButton *m_pPlayListButton;

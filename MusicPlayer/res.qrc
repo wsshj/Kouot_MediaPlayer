@@ -45,4 +45,8 @@
         <file>font/MoscowMetro.otf</file>
         <file>font/MoscowMetroColor.otf</file>
     </qresource>
+    <qresource prefix="/qss">
+        <file>qss/titlebar.qss</file>
+        <file>qss/playerbar.qss</file>
+    </qresource>
 </RCC>

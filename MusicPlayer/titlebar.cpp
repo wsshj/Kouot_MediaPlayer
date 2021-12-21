@@ -12,6 +12,9 @@ TitleBar::TitleBar(QWidget *parent) :
 
 void TitleBar::initUI()
 {
+    m_pBackgroundFrame = new QFrame(this);
+    m_pBackgroundFrame->setObjectName("backgroundFrame");
+
     // 定义
     m_pIconLabel = new QLabel(this);
     m_pTitleLabel = new QLabel(this);
@@ -20,7 +23,8 @@ void TitleBar::initUI()
     m_pCloseButton = new QPushButton(this);
 
     // 设置 objectName 供外部调用
-    m_pTitleLabel->setObjectName("whiteLabel");
+    m_pIconLabel->setObjectName("iconLabel");
+    m_pTitleLabel->setObjectName("titleLabel");
     m_pMinimizeButton->setObjectName("minimizeButton");
     m_pMaximizeButton->setObjectName("maximizeButton");
     m_pCloseButton->setObjectName("closeButton");
@@ -30,29 +34,7 @@ void TitleBar::initUI()
     m_pMaximizeButton->setToolTip("最大化");
     m_pCloseButton->setToolTip("关闭");
 
-    // 设置标题属性
-    m_pTitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-
-    // 设置按键图标
-    m_pMinimizeButton->setIcon(QIcon(":/image/image/min.png"));
-    m_pMaximizeButton->setIcon(QIcon(":/image/image/max.png"));
-    m_pCloseButton->setIcon(QIcon(":/image/image/close.png"));
-
-    // 设置按键图标尺寸
-    m_pMinimizeButton->setIconSize(QSize(25, 25));
-    m_pMaximizeButton->setIconSize(QSize(25, 25));
-    m_pCloseButton->setIconSize(QSize(25, 25));
-
-    // 去除按键边框
-    m_pMinimizeButton->setStyleSheet("border:none;");
-    m_pMaximizeButton->setStyleSheet("border:none;");
-    m_pCloseButton->setStyleSheet("border:none;");
-
-    // 创建画布填充背景色
-    QPalette pal(palette());
-    pal.setColor(QPalette::Background, QColor(150,150,150,170));
-    setAutoFillBackground(true);
-    setPalette(pal);
+    loadQss(":/qss/qss/titlebar.qss", this);
 
     connect(m_pMinimizeButton, SIGNAL(clicked(bool)), this, SLOT(onClicked()));
     connect(m_pMaximizeButton, SIGNAL(clicked(bool)), this, SLOT(onClicked()));
@@ -61,6 +43,8 @@ void TitleBar::initUI()
 
 void TitleBar::resizeEvent(QResizeEvent *event)
 {
+    m_pBackgroundFrame->setGeometry(0,0,width(),height());
+
     m_pIconLabel->setGeometry(0, 0, 30, 30);
     m_pTitleLabel->setGeometry(35, 0, 130, 30);
     m_pMinimizeButton->setGeometry(width()-90, 0, 30, 30);
@@ -130,28 +114,6 @@ bool TitleBar::eventFilter(QObject *obj, QEvent *event)
             // 窗体标题改变，则标题栏标题也随之改变
             m_pTitleLabel->setText(pWidget->windowTitle());
 
-            // 添加外部字体
-            QStringList m_fontList;
-            m_fontList.clear();
-
-            QFont font;
-            font.setPointSize(18);
-
-            int lcdFontId = QFontDatabase::addApplicationFont(":/font/font/MoscowMetroColor.otf"); // 从source资源文件
-            if (lcdFontId != -1) // -1为加载失败
-            {
-                m_fontList << QFontDatabase::applicationFontFamilies(lcdFontId);
-            }
-
-            if (!m_fontList.isEmpty())
-            {
-                font.setFamily(m_fontList.at(0));
-            }
-
-            // 为Label添加样式，字体颜色
-            m_pTitleLabel->setStyleSheet("color: qconicalgradient(cx:0.5, cy:0.5, angle:0, stop:0 rgba(255, 0, 0, 255), stop:0.166 rgba(255, 255, 0, 255), stop:0.333 rgba(0, 255, 0, 255), stop:0.5 rgba(0, 255, 255, 255), stop:0.666 rgba(0, 0, 255, 255), stop:0.833 rgba(255, 0, 255, 255), stop:1 rgba(255, 0, 0, 255));");
-            // 为Label添加字体
-            m_pTitleLabel->setFont(font);
             return true;
         }
     }

@@ -21,6 +21,8 @@ private:
     Ui::TitleBar *ui;
 
 private:
+    QFrame *m_pBackgroundFrame;
+
     QLabel *m_pIconLabel;
     QLabel *m_pTitleLabel;
     QPushButton *m_pMinimizeButton;
